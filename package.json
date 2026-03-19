@@ -1,0 +1,19 @@
+{
+  "name": "playwright-interview",
+  "version": "1.0.0",
+  "type": "module",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.9.2",
+    "@cucumber/cucumber": "^11.0.0"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report",
+    "test:cucumber": "cucumber-js --config cucumber.mjs --import tests/step-definitions/login.steps.js --import tests/step-definitions/add-items-to-cart.steps.js",
+    "test:cucumber:smoke": "cucumber-js --config cucumber.mjs --import tests/step-definitions/login.steps.js --import tests/step-definitions/add-items-to-cart.steps.js --tags \"@smoke\"",
+    "test:cucumber:THISONE": "cucumber-js tests/features/**/*.feature --import tests/step-definitions/login.steps.js --import tests/step-definitions/add-items-to-cart.steps.js --format progress --tags @THISONE",
+    "test:cucumber:tag": "cucumber-js --config cucumber.mjs --import tests/step-definitions/login.steps.js --import tests/step-definitions/add-items-to-cart.steps.js --tags"
+  }
+}
