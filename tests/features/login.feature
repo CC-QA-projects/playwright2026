@@ -1,15 +1,16 @@
+@THISONE
 Feature: Demoblaze UI tests
   As a user of Demoblaze
   I want to interact with the site
   So that I can verify key flows work
 
-  @THISONE
+
   Scenario: Login to demoblaze and assert successful login
     Given I am on the Demoblaze home page
     When I open the login modal
     And I log in with valid Demoblaze credentials
     Then I should see my welcome username
- @THISONE
+
   Scenario: Navbar elements are visible
     Given I am on the Demoblaze home page
     Then I should see the main navbar elements
