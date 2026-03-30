@@ -5,7 +5,9 @@
   "devDependencies": {
     "@cucumber/cucumber": "^11.0.0",
     "@playwright/test": "^1.56.1",
-    "@types/node": "^24.9.2"
+    "@types/node": "^24.9.2",
+    "allure-commandline": "^2.38.1",
+    "allure-cucumberjs": "^3.6.0"
   },
   "scripts": {
     "test": "playwright test",
@@ -18,6 +20,10 @@
     "test:cucumber:regression": "cucumber-js --config cucumber.mjs --tags \"@regression\"",
     "test:cucumber:login": "cucumber-js tests/features/login.feature --config cucumber.mjs",
     "test:cucumber:login:slow": "set SLOW_MO_MS=1000&& cucumber-js tests/features/login.feature --config cucumber.mjs",
-    "test:cucumber:tag": "cucumber-js --config cucumber.mjs --import tests/step-definitions/login.steps.js --import tests/step-definitions/add-items-to-cart.steps.js --tags"
+    "test:cucumber:tag": "cucumber-js --config cucumber.mjs --import tests/step-definitions/login.steps.js --import tests/step-definitions/add-items-to-cart.steps.js --tags",
+    "test:cucumber:allure": "cucumber-js --config cucumber.mjs",
+    "allure:generate": "allure generate reports/allure-results --clean -o reports/allure-report",
+    "allure:open": "allure open reports/allure-report",
+    "allure:serve": "allure serve reports/allure-results"
   }
 }
