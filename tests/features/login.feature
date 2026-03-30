@@ -1,4 +1,3 @@
-@THISONE
 Feature: Demoblaze UI tests
   As a user of Demoblaze
   I want to interact with the site
@@ -36,6 +35,7 @@ Feature: Demoblaze UI tests
     Given I am on the Demoblaze home page
     When I open the Samsung galaxy s6 product page
     Then I should see the Samsung galaxy s6 details
+
 
   Scenario: Carousel next and previous buttons work
     Given I am on the Demoblaze home page

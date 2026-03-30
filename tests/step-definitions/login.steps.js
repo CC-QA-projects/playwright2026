@@ -5,8 +5,13 @@ import { LoginPage } from '../../tests/pages/LoginPage.js';
 import { HomePage } from '../../tests/pages/HomePage.js';
 import { credentials } from '../../config/credentials.js';
 
+const SLOW_MO_MS = Number(process.env.SLOW_MO_MS ?? '1000');
+
 Given('I am on the Demoblaze home page', async function () {
-  this.browser = await chromium.launch({ headless: false });
+  this.browser = await chromium.launch({
+    headless: false,
+    slowMo: Number(process.env.SLOW_MO_MS ?? '0'),
+  });
   this.context = await this.browser.newContext();
   this.page = await this.context.newPage();
   this.loginPage = new LoginPage(this.page);

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "devDependencies": {
+    "@cucumber/cucumber": "^11.0.0",
     "@playwright/test": "^1.56.1",
-    "@types/node": "^24.9.2",
-    "@cucumber/cucumber": "^11.0.0"
+    "@types/node": "^24.9.2"
   },
   "scripts": {
     "test": "playwright test",
@@ -13,7 +13,11 @@
     "report": "playwright show-report",
     "test:cucumber": "cucumber-js --config cucumber.mjs --import tests/step-definitions/login.steps.js --import tests/step-definitions/add-items-to-cart.steps.js",
     "test:cucumber:smoke": "cucumber-js --config cucumber.mjs --import tests/step-definitions/login.steps.js --import tests/step-definitions/add-items-to-cart.steps.js --tags \"@smoke\"",
-    "test:cucumber:THISONE": "cucumber-js tests/features/**/*.feature --import tests/step-definitions/login.steps.js --import tests/step-definitions/add-items-to-cart.steps.js --format progress --tags @THISONE",
+    "test:cucumber:THISONE": "cucumber-js --config cucumber.mjs --tags \"@THISONE\"",
+    "test:cucumber:THISONE:slow": "set SLOW_MO_MS=1000&& cucumber-js --config cucumber.mjs --tags \"@THISONE\"",
+    "test:cucumber:regression": "cucumber-js --config cucumber.mjs --tags \"@regression\"",
+    "test:cucumber:login": "cucumber-js tests/features/login.feature --config cucumber.mjs",
+    "test:cucumber:login:slow": "set SLOW_MO_MS=1000&& cucumber-js tests/features/login.feature --config cucumber.mjs",
     "test:cucumber:tag": "cucumber-js --config cucumber.mjs --import tests/step-definitions/login.steps.js --import tests/step-definitions/add-items-to-cart.steps.js --tags"
   }
 }

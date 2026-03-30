@@ -22,3 +22,9 @@ Feature: Add items to cart
   Scenario: Cart total equals sum of item prices
     Given I have "Samsung galaxy s6" and "Sony vaio i5" in the cart
     Then the cart total should equal the sum of item prices
+
+
+  Scenario: Cart total equals double when same item added twice
+    Given I am on the Demoblaze home page
+    When I add "Samsung galaxy s6" to the cart 2 times
+    Then the cart total should be price x2 for "Samsung galaxy s6"
