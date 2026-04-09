@@ -1,15 +1,16 @@
+
 Feature: Demoblaze UI tests
   As a user of Demoblaze
   I want to interact with the site
   So that I can verify key flows work
 
-  @THISONE
+
   Scenario: Login to demoblaze and assert successful login
     Given I am on the Demoblaze home page
     When I open the login modal
     And I log in with valid Demoblaze credentials
     Then I should see my welcome username
- @THISONE
+
   Scenario: Navbar elements are visible
     Given I am on the Demoblaze home page
     Then I should see the main navbar elements
@@ -18,12 +19,12 @@ Feature: Demoblaze UI tests
     Given I am on the Demoblaze home page
     When I view the "<category>" category
     Then I should see the product "<product>" in the product list
-
     Examples:
       | category | product           |
       | Phones   | Samsung galaxy s6 |
       | Laptops  | Sony vaio i5      |
       | Monitors | Apple monitor 24  |
+
 
   Scenario: User can sign up
     Given I am on the Demoblaze home page
@@ -35,6 +36,7 @@ Feature: Demoblaze UI tests
     Given I am on the Demoblaze home page
     When I open the Samsung galaxy s6 product page
     Then I should see the Samsung galaxy s6 details
+
 
   Scenario: Carousel next and previous buttons work
     Given I am on the Demoblaze home page

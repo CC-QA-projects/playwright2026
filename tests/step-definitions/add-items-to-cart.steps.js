@@ -104,3 +104,53 @@ Then(
     expect(displayedTotal).toBe(sum);
   }
 );
+
+When(
+  'I add {string} to the cart 2 times',
+  async function (productName) {
+    const page = this.page;
+
+    for (let i = 0; i < 2; i += 1) {
+      if (i > 0) {
+        await page.getByRole('link', { name: 'Home' }).click();
+      }
+
+      await page.getByRole('link', { name: productName }).click();
+      const dialogPromise = page.waitForEvent('dialog');
+      await page.getByRole('link', { name: 'Add to cart' }).click();
+      await (await dialogPromise).accept();
+    }
+
+    await page.getByRole('link', { name: 'Cart', exact: true }).click();
+  }
+);
+
+Then(
+  'the cart total should be price x2 for {string}',
+  async function (productName) {
+    const page = this.page;
+    const rows = page.locator('#tbodyid > tr');
+    const rowCount = await rows.count();
+    const itemPrices = [];
+
+    for (let i = 0; i < rowCount; i += 1) {
+      const row = rows.nth(i);
+      const name = (await row.locator('td:nth-child(2)').textContent())?.trim();
+
+      if (name === productName) {
+        const priceText = (await row
+          .locator('td:nth-child(3)')
+          .textContent())?.trim();
+        itemPrices.push(Number(priceText));
+      }
+    }
+
+    expect(itemPrices.length).toBe(2);
+    expect(itemPrices[0]).toBe(itemPrices[1]);
+
+    const displayedTotalText = await page.locator('#totalp').textContent();
+    const displayedTotal = Number(displayedTotalText?.trim());
+
+    expect(displayedTotal).toBe(itemPrices[0] * 2);
+  }
+);
