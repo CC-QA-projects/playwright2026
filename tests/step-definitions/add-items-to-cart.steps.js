@@ -1,156 +1,105 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
+import { openDemoblazeHomePage } from './helpers/app-context.js';
+
+const productCategories = {
+  'Iphone 6 32gb': 'Phones',
+  'Samsung galaxy s6': 'Phones',
+  'Sony vaio i5': 'Laptops',
+  'Apple monitor 24': 'Monitors',
+};
+
+function getCategoryForProduct(productName) {
+  const category = productCategories[productName];
+
+  if (!category) {
+    throw new Error(`No category mapping exists for product "${productName}"`);
+  }
+
+  return category;
+}
+
+async function addProductToCart(world, productName, category) {
+  const dialogPromise = world.page.waitForEvent('dialog');
+  await world.homePage.addProductToCart(category, productName);
+  const dialog = await dialogPromise;
+  world.lastDialogMessage = dialog.message();
+  await dialog.accept();
+  await world.homePage.openCart();
+}
 
 When(
-  'I add {string} from the Phones category to the cart',
-  async function (productName) {
-    const page = this.page;
-    await page.getByRole('link', { name: 'Phones' }).click();
-    await page.getByRole('link', { name: productName }).click();
-
-    page.once('dialog', (dialog) => {
-      console.log(`Dialog message: ${dialog.message()}`);
-      dialog.dismiss().catch(() => {});
-    });
-
-    await page.getByRole('link', { name: 'Add to cart' }).click();
-    await page.getByRole('link', { name: 'Cart', exact: true }).click();
+  'I add {string} from the {string} category to the cart',
+  async function (productName, category) {
+    await addProductToCart(this, productName, category);
   }
 );
 
 Then('I should see {string} in the cart', async function (productName) {
-  await expect(this.page.locator('#tbodyid')).toContainText(productName);
+  await this.cartPage.expectProductVisible(productName);
 });
 
 Given('I have {string} in the cart', async function (productName) {
-  await this.runStep('Given I am on the Demoblaze home page');
-  await this.runStep(
-    `When I add "${productName}" from the Phones category to the cart`
-  );
+  await openDemoblazeHomePage(this);
+  await addProductToCart(this, productName, getCategoryForProduct(productName));
 });
 
-When('I remove {string} from the cart', async function () {
-  await this.page.getByRole('link', { name: 'Delete' }).click();
+When('I remove {string} from the cart', async function (productName) {
+  await this.cartPage.removeProduct(productName);
 });
 
 Then(
   'I should not see {string} in the cart',
   async function (productName) {
-    await expect(this.page.locator('#tbodyid')).not.toContainText(productName);
+    await this.cartPage.expectProductNotVisible(productName);
   }
 );
 
-Given('I have "Samsung galaxy s6" in the cart', async function () {
-  await this.runStep('Given I am on the Demoblaze home page');
-
-  const page = this.page;
-  await page.getByRole('link', { name: 'Samsung galaxy s6' }).click();
-  const dialogPromise = page.waitForEvent('dialog');
-  await page.getByRole('link', { name: 'Add to cart' }).click();
-  await (await dialogPromise).accept();
-
-  await page.getByRole('link', { name: 'Cart', exact: true }).click();
+Then('I should still see {string} in the cart', async function (productName) {
+  await this.cartPage.expectProductVisible(productName);
 });
 
-When('I place an order', async function () {
-  await this.page.getByRole('button', { name: 'Place Order' }).click();
-});
-
-Then('the order total should be 360', async function () {
-  await expect(this.page.locator('#totalm')).toContainText('Total: 360');
+Then('the cart total should equal {int}', async function (expectedTotal) {
+  await this.cartPage.expectTotal(expectedTotal);
 });
 
 Given(
   'I have "Samsung galaxy s6" and "Sony vaio i5" in the cart',
   async function () {
-    await this.runStep('Given I am on the Demoblaze home page');
-
-    const page = this.page;
-    // First item
-    await page.getByRole('link', { name: 'Samsung galaxy s6' }).click();
-    let dialogPromise = page.waitForEvent('dialog');
-    await page.getByRole('link', { name: 'Add to cart' }).click();
-    await (await dialogPromise).accept();
-
-    // Second item
-    await page.getByRole('link', { name: 'Home' }).click();
-    await page.getByRole('link', { name: 'Sony vaio i5' }).click();
-    dialogPromise = page.waitForEvent('dialog');
-    await page.getByRole('link', { name: 'Add to cart' }).click();
-    await (await dialogPromise).accept();
-
-    await page.getByRole('link', { name: 'Cart', exact: true }).click();
+    await openDemoblazeHomePage(this);
+    await addProductToCart(this, 'Samsung galaxy s6', 'Phones');
+    await this.homePage.openHome();
+    await addProductToCart(this, 'Sony vaio i5', 'Laptops');
   }
 );
 
 Then(
   'the cart total should equal the sum of item prices',
   async function () {
-    const page = this.page;
-    const priceTexts = await page
-      .locator('#tbodyid > tr td:nth-child(3)')
-      .allTextContents();
-    const sum = priceTexts.reduce(
-      (total, t) => total + Number(t.trim()),
-      0
-    );
-
-    const totalText = await page.locator('#totalp').textContent();
-    const displayedTotal = Number(totalText?.trim());
-
-    console.log(`Sum of item prices: ${sum}`);
-    console.log(`Displayed total: ${displayedTotal}`);
-
-    expect(displayedTotal).toBe(sum);
+    await this.cartPage.expectTotalEqualsItemPriceSum();
   }
 );
 
 When(
   'I add {string} to the cart 2 times',
   async function (productName) {
-    const page = this.page;
-
+    const category = getCategoryForProduct(productName);
     for (let i = 0; i < 2; i += 1) {
       if (i > 0) {
-        await page.getByRole('link', { name: 'Home' }).click();
+        await this.homePage.openHome();
       }
-
-      await page.getByRole('link', { name: productName }).click();
-      const dialogPromise = page.waitForEvent('dialog');
-      await page.getByRole('link', { name: 'Add to cart' }).click();
-      await (await dialogPromise).accept();
+      await addProductToCart(this, productName, category);
     }
-
-    await page.getByRole('link', { name: 'Cart', exact: true }).click();
   }
 );
 
 Then(
   'the cart total should be price x2 for {string}',
   async function (productName) {
-    const page = this.page;
-    const rows = page.locator('#tbodyid > tr');
-    const rowCount = await rows.count();
-    const itemPrices = [];
-
-    for (let i = 0; i < rowCount; i += 1) {
-      const row = rows.nth(i);
-      const name = (await row.locator('td:nth-child(2)').textContent())?.trim();
-
-      if (name === productName) {
-        const priceText = (await row
-          .locator('td:nth-child(3)')
-          .textContent())?.trim();
-        itemPrices.push(Number(priceText));
-      }
-    }
+    const itemPrices = await this.cartPage.getProductPrices(productName);
 
     expect(itemPrices.length).toBe(2);
     expect(itemPrices[0]).toBe(itemPrices[1]);
-
-    const displayedTotalText = await page.locator('#totalp').textContent();
-    const displayedTotal = Number(displayedTotalText?.trim());
-
-    expect(displayedTotal).toBe(itemPrices[0] * 2);
+    await this.cartPage.expectTotal(itemPrices[0] * 2);
   }
 );

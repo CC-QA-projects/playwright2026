@@ -1,16 +1,11 @@
+@regression
+Feature: Catalog browsing
 
-Feature: Demoblaze UI tests
-  As a user of Demoblaze
-  I want to interact with the site
-  So that I can verify key flows work
+  As a Demoblaze shopper
+  I want to browse the storefront with confidence
+  So that I can discover products before adding them to cart
 
-
-  Scenario: Login to demoblaze and assert successful login
-    Given I am on the Demoblaze home page
-    When I open the login modal
-    And I log in with valid Demoblaze credentials
-    Then I should see my welcome username
-
+  @smoke
   Scenario: Navbar elements are visible
     Given I am on the Demoblaze home page
     Then I should see the main navbar elements
@@ -25,18 +20,10 @@ Feature: Demoblaze UI tests
       | Laptops  | Sony vaio i5      |
       | Monitors | Apple monitor 24  |
 
-
-  Scenario: User can sign up
-    Given I am on the Demoblaze home page
-    When I open the Sign up modal
-    And I sign up with valid credentials
-    Then a sign up alert should appear
-
   Scenario: Product details are visible
     Given I am on the Demoblaze home page
     When I open the Samsung galaxy s6 product page
     Then I should see the Samsung galaxy s6 details
-
 
   Scenario: Carousel next and previous buttons work
     Given I am on the Demoblaze home page
@@ -44,14 +31,3 @@ Feature: Demoblaze UI tests
     Then I should see the Second slide image
     When I click Previous on the carousel
     Then I should see the First slide image
-
-  Scenario: Login toggles nav options
-    Given I am on the Demoblaze home page
-    When I open the login modal
-    And I log in with valid Demoblaze credentials
-    Then I should see the Log out link and not the Log in link
-
-  Scenario: User logs out and sees Log in
-    Given I am logged in to Demoblaze
-    When I log out of Demoblaze
-    Then I should see the Log in link and not the Log out link

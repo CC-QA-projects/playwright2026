@@ -1,71 +1,44 @@
-# playwright2026
+# Demoblaze UI Automation
 
-## UI Test Execution Flow (Cucumber -> Allure)
+Playwright + Cucumber tests for the main Demoblaze user journeys.
 
-Use this order every time:
-1. Run a Cucumber command (this executes tests and writes Allure raw results).
-2. Open or generate the Allure report from those results.
+## What It Tests
 
-Allure raw files are written to `reports/allure-results/`.
-Generated HTML report is written to `reports/allure-report/`.
+- Authentication: sign up, duplicate signup, valid login, invalid login
+- Catalog browsing: navbar, categories, product details, carousel
+- Cart: add items, remove specific items, total validation
+- Checkout: place order and verify purchase confirmation
+- Site modals: Contact and About us
 
-## Prerequisites
+## Run It
 
-- Install dependencies once:
-  - `npm install`
+Install dependencies and Playwright's browser once:
 
-## Step 1: Run UI tests with Cucumber
+```bash
+npm install
+npx playwright install chromium
+```
 
-Pick one command based on what you want to run:
+Run the suite or a focused area:
 
-- `npm run test:cucumber`
-  - Runs all Cucumber feature files.
+```bash
+npm run test:cucumber
+npm run test:cucumber:smoke
+npm run test:cucumber:regression
+npm run test:cucumber:auth
+npm run test:cucumber:cart
+npm run test:cucumber:checkout
+npm run test:cucumber:modals
+```
 
-- `npm run test:cucumber:smoke`
-  - Runs only scenarios tagged with `@smoke`.
+## Reports
 
-- `npm run test:cucumber:regression`
-  - Runs only scenarios tagged with `@regression`.
+Cucumber writes Allure results to `reports/allure-results`.
 
-- `npm run test:cucumber:THISONE`
-  - Runs only scenarios tagged with `@THISONE`.
+```bash
+npm run allure:serve
+npm run allure:generate
+npm run allure:open
+```
 
-- `npm run test:cucumber:THISONE:slow`
-  - Same as above, but sets `SLOW_MO_MS=1000` so browser actions run slower for easier visual debugging.
-
-- `npm run test:cucumber:login`
-  - Runs only `tests/features/login.feature`.
-
-During any Cucumber run, the Allure reporter collects test results automatically.
-
-## Step 2: View Allure report
-
-After running tests, choose one of these:
-
-- `npm run allure:serve`
-  - Starts a temporary local Allure server directly from `reports/allure-results/`.
-  - Best for quick viewing right after execution.
-
-- `npm run allure:generate`
-  - Builds static HTML report files in `reports/allure-report/`.
-  - Useful for archiving or sharing generated artifacts.
-
-- `npm run allure:open`
-  - Opens the already generated static report from `reports/allure-report/`.
-  - Use this after `npm run allure:generate`.
-
-## Typical examples
-
-- Run one debug tag slowly, then open report quickly:
-  - `npm run test:cucumber:THISONE:slow`
-  - `npm run allure:serve`
-
-- Run smoke suite, generate static report, then open it:
-  - `npm run test:cucumber:smoke`
-  - `npm run allure:generate`
-  - `npm run allure:open`
-
-## Notes
-
-- Failed scenarios attach screenshots automatically via `tests/step-definitions/hooks.js`.
-- If you want a clean report each run, delete old files in `reports/allure-results/` before running tests.
+Failed scenarios attach screenshots automatically.

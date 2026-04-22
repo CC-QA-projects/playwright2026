@@ -1,4 +1,6 @@
-import { After, Status } from '@cucumber/cucumber';
+import { After, Status, setDefaultTimeout } from '@cucumber/cucumber';
+
+setDefaultTimeout(Number(process.env.CUCUMBER_STEP_TIMEOUT_MS ?? '30000'));
 
 After(async function (scenario) {
   if (scenario.result?.status === Status.FAILED && this.page) {
