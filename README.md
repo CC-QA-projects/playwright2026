@@ -35,22 +35,6 @@ The repository currently covers these main Demoblaze journeys:
 - Checkout: place order and verify purchase confirmation
 - Site modals: Contact and About Us
 
-## Project Structure
-
-|-- config/
-|-- reports/
-|-- tests/
-|   |-- API/
-|   |-- features/
-|   |-- pages/
-|   `-- step-definitions/
-|       `-- helpers/
-|-- cucumber.mjs
-|-- playwright.config.js
-|-- package.json
-`-- README.md
-```
-
 ## Architecture
 
 ### 1. Playwright with JavaScript
