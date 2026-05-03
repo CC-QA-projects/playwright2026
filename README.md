@@ -1,134 +1,69 @@
 # Playwright Interview Framework
 
-UI automation framework for the [Demoblaze](https://demoblaze.com/) demo application built with `Playwright + JavaScript`, organized with the `Page Object Model (POM)`, executed through `Cucumber` for BDD-style scenarios, and reported with `Allure`.
-
-The project is also set up to work well in `Cursor`, including a repo-local Cursor skill for reviewing Playwright locator quality and page object patterns.
+UI automation framework for [Demoblaze](https://demoblaze.com/) built with `Playwright`, `JavaScript`, `Cucumber`, `Page Object Model`, and `Allure`.
 
 ## Overview
 
-This framework is designed to keep test code readable, scalable, and easy to debug:
+This project is designed to keep UI tests readable, reusable, and easy to scale. Business flows are written in Gherkin, mapped to step definitions, and backed by page objects that centralize selectors and page actions.
 
-- `Playwright` drives browser automation and can also support API testing
-- `JavaScript` keeps the setup lightweight and approachable
-- `Cucumber` maps business-readable `.feature` files to step definitions
-- `POM` centralizes locators and page behavior in reusable page objects
-- `Allure` provides rich test reporting with screenshots on failures
-- `Cursor` can be used as the primary AI-assisted editor for test creation, refactoring, and locator review
+## Framework
 
-## Framework Highlights
+- `Playwright` for browser automation
+- `JavaScript` with ES modules
+- `Cucumber` for BDD feature files and step definitions
+- `Page Object Model` for reusable UI interactions
+- `Allure` for reporting and failure screenshots
 
-- BDD scenarios written in Gherkin under `tests/features`
-- Reusable page objects under `tests/pages`
-- Shared browser/page bootstrap logic in `tests/step-definitions/helpers`
-- Allure result generation for Cucumber runs
-- Automatic screenshot attachment for failed scenarios
-- GitHub Actions workflow included for CI execution
-- Playwright test runner support also exists for non-Cucumber cases, including API tests
+## Highlights
 
-## Current Test Coverage
+- Clean separation between `features`, `step-definitions`, and `pages`
+- Reusable page object layer to reduce locator duplication
+- Allure reporting wired into Cucumber runs
+- Full-page screenshot captured automatically on failed scenarios
+- Targeted smoke, regression, and feature-level execution commands
 
-The repository currently covers these main Demoblaze journeys:
+## Test Coverage
+
+Current Demoblaze coverage includes:
 
 - Authentication: sign up, duplicate signup, valid login, invalid login
-- Catalog browsing: navbar, categories, product details, carousel behavior
-- Cart flows: add items, remove items, validate totals
-- Checkout: place order and verify purchase confirmation
+- Catalog: navbar, categories, product details, carousel behavior
+- Cart: add item, remove item, validate totals
+- Checkout: complete purchase and verify confirmation
 - Site modals: Contact and About Us
-
-## Architecture
-
-### 1. Playwright with JavaScript
-
-Playwright is the automation engine used to drive Chromium-based UI tests and support additional test types such as API validation. The project is configured as an ES module JavaScript repo via `package.json`.
-
-### 2. POM with Cucumber
-
-The framework follows a Page Object Model structure:
-
-- `tests/pages/*.js` contains page classes such as `HomePage`, `LoginPage`, `CartPage`, and `CheckoutPage`
-- `tests/features/*.feature` contains business-readable scenarios
-- `tests/step-definitions/*.js` connects Gherkin steps to the page object methods
-
-This keeps test intent readable while reducing locator duplication and step-definition clutter.
-
-### 3. Allure Reporting
-
-Allure is wired through `cucumber.mjs` using `allure-cucumberjs/reporter`, with results written to `reports/allure-results`.
-
-When a scenario fails, the Cucumber `After` hook captures a full-page screenshot and attaches it to the Allure result.
-
-### 4. Cursor Integration
-
-This repo is friendly to `Cursor` workflows:
-
-- Open the project in Cursor and use AI chat to generate or refine page objects, steps, and feature files
-- Cursor works especially well here for:
-  - generating new Cucumber scenarios from acceptance criteria
-  - refactoring duplicated selectors into page objects
-  - reviewing flaky locators in `tests/pages` and `tests/step-definitions`
-  - documenting new commands and improving reporting workflows
-
-Example prompts you can use in Cursor:
-
-- `Review the locators in tests/pages/LoginPage.js and suggest more stable Playwright selectors`
-- `Create a new Cucumber feature and step definitions for product deletion from the cart`
-- `Refactor duplicated selectors in step definitions into the HomePage page object`
-- `Help debug why this scenario is failing and what will appear in Allure`
-
-## Prerequisites
-
-- `Node.js` 18+ recommended
-- `npm`
-- `Java` installed if you want to use the Allure CLI locally
 
 ## Installation
 
-Install project dependencies:
+Prerequisites:
+
+- `Node.js` 18+
+- `npm`
+- `Java` if you want to open Allure reports locally
+
+Install dependencies and browser binaries:
 
 ```bash
 npm install
-```
-
-Install the required Playwright browser:
-
-```bash
 npx playwright install chromium
 ```
 
-If you want full CI-style browser dependencies, you can also use:
-
-```bash
-npx playwright install --with-deps
-```
-
-## Running The Test Suites
-
-### Run the Cucumber UI suite
+## Important Scripts
 
 ```bash
 npm run test:cucumber
-```
-
-### Run targeted Cucumber suites
-
-```bash
 npm run test:cucumber:smoke
 npm run test:cucumber:regression
 npm run test:cucumber:auth
 npm run test:cucumber:cart
 npm run test:cucumber:checkout
 npm run test:cucumber:modals
+npm run test:cucumber:smoke:allure
+npm run test:cucumber:regression:allure
+npm run allure:generate
+npm run allure:open
 ```
 
-### Run by tag
-
-```bash
-npm run test:cucumber:tag -- "@smoke"
-```
-
-### Run Playwright-native tests
-
-The repo also contains Playwright runner support, which can be useful for API tests or non-BDD checks:
+Other useful commands:
 
 ```bash
 npm test
@@ -136,45 +71,51 @@ npm run test:ui
 npm run report
 ```
 
-## Allure Reporting
+## How To Use
 
-Generate, open, or serve Allure reports:
-
-```bash
-npm run allure:clean
-npm run allure:generate
-npm run allure:open
-```
-
-Or serve the latest results directly:
-
-```bash
-npm run allure:serve
-```
-
-Useful workflow:
+Run the full Cucumber suite:
 
 ```bash
 npm run test:cucumber
+```
+
+Run a focused suite:
+
+```bash
+npm run test:cucumber:smoke
+npm run test:cucumber:modals
+```
+
+Run by tag:
+
+```bash
+npm run test:cucumber:tag -- "@smoke"
+```
+
+Generate and open an Allure report after a run:
+
+```bash
 npm run allure:generate
 npm run allure:open
 ```
 
-Generated output locations:
+One-command smoke run with Allure:
 
-- Allure raw results: `reports/allure-results`
-- Allure HTML report: `reports/allure-report`
+```bash
+npm run test:cucumber:smoke:allure
+```
 
 ## Configuration
 
-The framework supports a few useful environment variables:
+Useful environment variables:
 
-- `BASE_URL`: target application URL, defaults to `https://demoblaze.com/`
-- `HEADLESS`: set to `false` to run headed browser mode in Cucumber
-- `SLOW_MO_MS`: adds Playwright slow motion for debugging
-- `CUCUMBER_STEP_TIMEOUT_MS`: overrides the default Cucumber step timeout
+- `BASE_URL` to override the target application URL
+- `HEADLESS=false` to run headed
+- `SLOW_MO_MS=1000` to slow browser actions for debugging
+- `CUCUMBER_STEP_TIMEOUT_MS` to change the step timeout
+- `CUCUMBER_SCENARIO_LOGS=false` to disable live scenario logging
 
-Examples:
+Windows examples:
 
 ```bash
 set HEADLESS=false&& npm run test:cucumber
