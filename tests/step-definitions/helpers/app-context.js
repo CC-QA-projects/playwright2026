@@ -4,6 +4,7 @@ import { HomePage } from '../../pages/HomePage.js';
 import { CartPage } from '../../pages/CartPage.js';
 import { CheckoutPage } from '../../pages/CheckoutPage.js';
 import { CommonModalsPage } from '../../pages/CommonModalsPage.js';
+import { ProductPage } from '../../pages/ProductPage.js';
 
 const BASE_URL = process.env.BASE_URL ?? 'https://demoblaze.com/';
 const DEFAULT_HEADLESS = process.env.HEADLESS !== 'false';
@@ -37,8 +38,13 @@ async function openDemoblazeHomePage(world) {
   world.cartPage = new CartPage(world.page);
   world.checkoutPage = new CheckoutPage(world.page);
   world.commonModalsPage = new CommonModalsPage(world.page);
+  world.productPage = new ProductPage(world.page);
 
+  const homeLoaded = world.page.waitForResponse(
+    (response) => response.url().includes('/entries') && response.request().method() === 'GET'
+  );
   await world.page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
+  await homeLoaded;
 }
 
 export { getGeneratedCredentials, openDemoblazeHomePage };

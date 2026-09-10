@@ -58,13 +58,13 @@ class LoginPage extends BasePage {
     await this.signupUsernameField.fill(username);
     await this.signupPasswordField.fill(password);
 
-    const message = await this.captureDialogMessage(async () => {
+    return this.captureDialogMessage(async () => {
       await this.signupSubmitButton.click();
     });
+  }
 
+  async expectSignupModalClosed() {
     await expect(this.signupModal).toBeHidden({ timeout: 10000 });
-
-    return message;
   }
 
   async expectWelcomeUser(username) {

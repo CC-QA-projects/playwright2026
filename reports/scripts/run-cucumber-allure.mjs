@@ -28,6 +28,14 @@ const testExitCode = await run('npm', ['run', testScript]);
 const generateExitCode = await run('npm', ['run', 'allure:generate']);
 
 if (generateExitCode === 0) {
+  if (process.env.AI_DEBUG_ALLURE === 'true') {
+    const debugExitCode = await run('npm', ['run', 'allure:debug']);
+
+    if (debugExitCode !== 0) {
+      console.error('AI Allure debug summary failed to generate.');
+    }
+  }
+
   await run('npm', ['run', 'allure:open']);
 }
 
