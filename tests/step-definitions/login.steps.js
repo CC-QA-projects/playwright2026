@@ -12,6 +12,7 @@ Given('I am on the Demoblaze home page', async function () {
 When('I sign up with a generated Demoblaze account', async function () {
   const { username, password } = getGeneratedCredentials(this);
   this.lastDialogMessage = await this.loginPage.signUp(username, password);
+  await this.loginPage.expectSignupModalClosed();
 });
 
 Then('I should see a signup success alert', function () {
@@ -62,10 +63,6 @@ Then('I should not see a welcome username', async function () {
 
 When('I log out of Demoblaze', async function () {
   await this.loginPage.clickLogout();
-});
-
-Then('I should see the Log out link and not the Log in link', async function () {
-  await this.loginPage.expectLoggedInNav();
 });
 
 Then('I should see the Log in link and not the Log out link', async function () {

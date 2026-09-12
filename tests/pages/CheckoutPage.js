@@ -1,8 +1,9 @@
 import { expect } from '@playwright/test';
+import { BasePage } from './BasePage.js';
 
-class CheckoutPage {
+class CheckoutPage extends BasePage {
   constructor(page) {
-    this.page = page;
+    super(page);
     this.orderModalLabel = page.locator('#orderModalLabel');
     this.nameField = page.locator('#name');
     this.countryField = page.locator('#country');

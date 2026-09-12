@@ -9,8 +9,9 @@ Feature: Checkout flow
   Scenario: Guest can complete a purchase from the cart
     Given I am on the Demoblaze home page
     When I add "Samsung galaxy s6" from the "Phones" category to the cart
-    And the place order modal shows a total of 360
-    And I place an order for:
+    And I open the place order modal
+    Then the order modal total should be 360
+    When I place an order for:
       | name    | Calvin Buyer     |
       | country | United States    |
       | city    | Austin           |

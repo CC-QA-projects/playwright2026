@@ -22,8 +22,8 @@ Feature: Catalog browsing
 
   Scenario: Product details are visible
     Given I am on the Demoblaze home page
-    When I open the Samsung galaxy s6 product page
-    Then I should see the Samsung galaxy s6 details
+    When I open the "Samsung galaxy s6" product page
+    Then I should see the "Samsung galaxy s6" product details
 
   Scenario: Carousel next and previous buttons work
     Given I am on the Demoblaze home page

@@ -8,6 +8,7 @@ playwright/.cache/
 blob-report/
 reports/allure-results/
 reports/allure-report/
+reports/ai-debug/
 
 # Environment
 .env
@@ -20,6 +21,3 @@ reports/allure-report/
 *.log
 .DS_Store
 Thumbs.db
-
-# Optional
-package-lock.json

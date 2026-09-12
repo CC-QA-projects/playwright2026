@@ -1,8 +1,11 @@
 import { When, Then } from '@cucumber/cucumber';
 
-Then('the place order modal shows a total of {int}', async function (expectedTotal) {
+When('I open the place order modal', async function () {
   await this.cartPage.openPlaceOrder();
   await this.checkoutPage.expectOrderModalVisible();
+});
+
+Then('the order modal total should be {int}', async function (expectedTotal) {
   await this.checkoutPage.expectModalTotal(expectedTotal);
 });
 
@@ -15,9 +18,6 @@ Then('I should see the purchase confirmation', async function () {
   await this.checkoutPage.expectConfirmationVisible();
 });
 
-Then(
-  'the purchase confirmation should include {string}',
-  async function (text) {
-    await this.checkoutPage.expectConfirmationContains(text);
-  }
-);
+Then('the purchase confirmation should include {string}', async function (text) {
+  await this.checkoutPage.expectConfirmationContains(text);
+});

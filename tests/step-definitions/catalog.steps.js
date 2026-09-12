@@ -1,5 +1,4 @@
 import { When, Then } from '@cucumber/cucumber';
-import { expect } from '@playwright/test';
 
 Then('I should see the main navbar elements', async function () {
   await this.homePage.validateNavbarElements();
@@ -13,34 +12,26 @@ Then('I should see the product {string} in the product list', async function (pr
   await this.homePage.expectProductInList(product);
 });
 
-When('I open the Samsung galaxy s6 product page', async function () {
-  await this.homePage.openProduct('Samsung galaxy s6');
+When('I open the {string} product page', async function (productName) {
+  await this.homePage.openProduct(productName);
 });
 
-Then('I should see the Samsung galaxy s6 details', async function () {
-  await expect(this.page.getByRole('heading', { name: 'Samsung galaxy s6' })).toBeVisible();
-  await expect(this.page.getByRole('heading', { name: '$360 *includes tax' })).toBeVisible();
-  await expect(this.page.getByText('The Samsung Galaxy S6 is')).toBeVisible();
+Then('I should see the {string} product details', async function (productName) {
+  await this.productPage.expectProductDetails(productName);
 });
 
 When('I click Next on the carousel', async function () {
-  await this.page
-    .locator('#carouselExampleIndicators')
-    .getByRole('button', { name: 'Next' })
-    .click();
+  await this.homePage.clickCarouselNext();
 });
 
 Then('I should see the Second slide image', async function () {
-  await expect(this.page.getByRole('img', { name: 'Second slide' })).toBeVisible();
+  await this.homePage.expectSecondSlideVisible();
 });
 
 When('I click Previous on the carousel', async function () {
-  await this.page
-    .locator('#carouselExampleIndicators')
-    .getByRole('button', { name: 'Previous' })
-    .click();
+  await this.homePage.clickCarouselPrevious();
 });
 
 Then('I should see the First slide image', async function () {
-  await expect(this.page.getByRole('img', { name: 'First slide' })).toBeVisible();
+  await this.homePage.expectFirstSlideVisible();
 });

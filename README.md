@@ -21,6 +21,7 @@ This project is designed to keep UI tests readable, reusable, and easy to scale.
 - Allure reporting wired into Cucumber runs
 - Full-page screenshot captured automatically on failed scenarios
 - Targeted smoke, regression, and feature-level execution commands
+- Optional AI-assisted debugging summary for failed Allure cases
 
 ## Test Coverage
 
@@ -58,7 +59,10 @@ npm run test:cucumber:cart
 npm run test:cucumber:checkout
 npm run test:cucumber:modals
 npm run test:cucumber:smoke:allure
+npm run test:cucumber:smoke:allure:ai
 npm run test:cucumber:regression:allure
+npm run test:cucumber:regression:allure:ai
+npm run allure:debug
 npm run allure:generate
 npm run allure:open
 ```
@@ -105,6 +109,18 @@ One-command smoke run with Allure:
 npm run test:cucumber:smoke:allure
 ```
 
+Generate an AI-assisted failure summary from the latest Allure report:
+
+```bash
+npm run allure:debug
+```
+
+Run smoke tests, generate Allure, and produce the AI summary automatically:
+
+```bash
+npm run test:cucumber:smoke:allure:ai
+```
+
 ## Configuration
 
 Useful environment variables:
@@ -114,6 +130,10 @@ Useful environment variables:
 - `SLOW_MO_MS=1000` to slow browser actions for debugging
 - `CUCUMBER_STEP_TIMEOUT_MS` to change the step timeout
 - `CUCUMBER_SCENARIO_LOGS=false` to disable live scenario logging
+- `AI_DEBUG_ALLURE=true` to auto-run the AI debug step after Allure generation
+- `OPENAI_API_KEY` to enable model-based diagnosis
+- `AI_DEBUG_MODEL` to override the default model used by the Allure debug script
+- `AI_DEBUG_MAX_FAILURES` to limit how many failed cases are analyzed per run
 
 Windows examples:
 

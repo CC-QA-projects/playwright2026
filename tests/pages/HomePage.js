@@ -1,8 +1,9 @@
 import { expect } from '@playwright/test';
+import { BasePage } from './BasePage.js';
 
-class HomePage {
+class HomePage extends BasePage {
   constructor(page) {
-    this.page = page;
+    super(page);
     this.navbar = page.locator('#navbarExample');
     this.cart = page.locator('#cartur');
     this.loginBtn = page.locator('#login2');
@@ -12,6 +13,14 @@ class HomePage {
     this.homeLink = page.getByRole('link', { name: /^Home/ });
     this.productGrid = page.locator('#tbodyid');
     this.addToCartLink = page.getByRole('link', { name: 'Add to cart' });
+    this.carouselNextBtn = page
+      .locator('#carouselExampleIndicators')
+      .getByRole('button', { name: 'Next' });
+    this.carouselPrevBtn = page
+      .locator('#carouselExampleIndicators')
+      .getByRole('button', { name: 'Previous' });
+    this.firstSlideImg = page.getByRole('img', { name: 'First slide' });
+    this.secondSlideImg = page.getByRole('img', { name: 'Second slide' });
   }
 
   async isHomeVisible() {
@@ -39,7 +48,11 @@ class HomePage {
   }
 
   async openCategory(category) {
+    const categoryLoaded = this.page.waitForResponse(
+      (response) => response.url().includes('/bycat') && response.request().method() === 'POST'
+    );
     await this.page.getByRole('link', { name: category, exact: true }).click();
+    await categoryLoaded;
     await expect(this.productGrid).toBeVisible();
   }
 
@@ -53,23 +66,27 @@ class HomePage {
   }
 
   async openCart() {
+    const cartLoaded = this.page.waitForResponse(
+      (response) => response.url().includes('/viewcart') && response.request().method() === 'POST'
+    );
     await this.page.getByRole('link', { name: 'Cart', exact: true }).click();
+    await cartLoaded;
     await expect(this.page.locator('#page-wrapper')).toContainText('Products');
   }
 
   async openHome() {
+    const homeLoaded = this.page.waitForResponse(
+      (response) => response.url().includes('/entries') && response.request().method() === 'GET'
+    );
     await this.homeLink.click();
+    await homeLoaded;
     await expect(this.productGrid).toBeVisible();
-  }
-
-  async addCurrentProductToCart() {
-    await this.addToCartLink.click();
   }
 
   async addProductToCart(category, productName) {
     await this.openCategory(category);
     await this.openProduct(productName);
-    await this.addCurrentProductToCart();
+    return this.captureDialogMessage(() => this.addToCartLink.click());
   }
 
   async openContactModal() {
@@ -87,6 +104,22 @@ class HomePage {
     await this.isCartVisible();
     await this.isLoginBtnVisible();
     await this.isSignupBtnVisible();
+  }
+
+  async clickCarouselNext() {
+    await this.carouselNextBtn.click();
+  }
+
+  async clickCarouselPrevious() {
+    await this.carouselPrevBtn.click();
+  }
+
+  async expectFirstSlideVisible() {
+    await expect(this.firstSlideImg).toBeVisible();
+  }
+
+  async expectSecondSlideVisible() {
+    await expect(this.secondSlideImg).toBeVisible();
   }
 }
 

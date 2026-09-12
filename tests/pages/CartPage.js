@@ -1,8 +1,9 @@
 import { expect } from '@playwright/test';
+import { BasePage } from './BasePage.js';
 
-class CartPage {
+class CartPage extends BasePage {
   constructor(page) {
-    this.page = page;
+    super(page);
     this.cartRows = page.locator('#tbodyid > tr');
     this.totalLabel = page.locator('#totalp');
     this.placeOrderButton = page.getByRole('button', { name: 'Place Order' });
@@ -55,6 +56,7 @@ class CartPage {
 
   async getProductPrices(productName) {
     const rows = this.productRow(productName);
+    await expect(rows.first()).toBeVisible();
     const rowCount = await rows.count();
     const prices = [];
 
