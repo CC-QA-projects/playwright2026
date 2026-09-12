@@ -1,5 +1,6 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
+import { getEnvCredentials } from '../../config/credentials.js';
 import {
   getGeneratedCredentials,
   openDemoblazeHomePage,
@@ -40,6 +41,16 @@ When('I log in with the generated Demoblaze credentials', async function () {
 Then('I should see my generated welcome username', async function () {
   const { username } = getGeneratedCredentials(this);
   await this.loginPage.expectWelcomeUser(username);
+});
+
+When('I log in with the configured Demoblaze credentials', async function () {
+  const { username, password } = getEnvCredentials();
+  this.envUsername = username;
+  await this.loginPage.login(username, password);
+});
+
+Then('I should see the configured welcome username', async function () {
+  await this.loginPage.expectWelcomeUser(this.envUsername ?? getEnvCredentials().username);
 });
 
 When(

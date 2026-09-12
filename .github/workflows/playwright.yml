@@ -1,11 +1,29 @@
 name: Playwright Tests
 on:
+  # Every branch gets CI on push, so feature branches are covered before a PR exists.
   push:
-    branches: [ main, master ]
+    branches: ['**']
+  # Kept only for pull requests from forks, where no push event fires against this
+  # repo. Same-repo PRs are filtered out by the job's `if` below to avoid two
+  # identical runs per commit.
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
+  # Allows a manual re-run from the Actions tab.
+  workflow_dispatch:
+
+# Supersede an in-flight run when the same branch is pushed again. The event name is
+# part of the key so a pull_request run can never cancel its paired push run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   test:
+    # Run for push and workflow_dispatch always; for pull_request only when the head
+    # repo differs from this one (i.e. a fork).
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name != github.repository
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:

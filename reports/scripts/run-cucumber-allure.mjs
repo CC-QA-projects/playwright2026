@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import '../../config/env.js';
 
 const testScript = process.argv[2];
 

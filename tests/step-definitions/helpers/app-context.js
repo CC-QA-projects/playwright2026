@@ -1,13 +1,11 @@
 import { chromium } from 'playwright';
+import { env } from '../../../config/env.js';
 import { LoginPage } from '../../pages/LoginPage.js';
 import { HomePage } from '../../pages/HomePage.js';
 import { CartPage } from '../../pages/CartPage.js';
 import { CheckoutPage } from '../../pages/CheckoutPage.js';
 import { CommonModalsPage } from '../../pages/CommonModalsPage.js';
 import { ProductPage } from '../../pages/ProductPage.js';
-
-const BASE_URL = process.env.BASE_URL ?? 'https://demoblaze.com/';
-const DEFAULT_HEADLESS = process.env.HEADLESS !== 'false';
 
 function createGeneratedCredentials() {
   const uniqueSuffix = `${Date.now()}${Math.random().toString(36).slice(2, 8)}`;
@@ -28,8 +26,8 @@ function getGeneratedCredentials(world) {
 
 async function openDemoblazeHomePage(world) {
   world.browser = await chromium.launch({
-    headless: DEFAULT_HEADLESS,
-    slowMo: Number(process.env.SLOW_MO_MS ?? '0'),
+    headless: env.headless,
+    slowMo: env.slowMoMs,
   });
   world.context = await world.browser.newContext();
   world.page = await world.context.newPage();
@@ -43,7 +41,7 @@ async function openDemoblazeHomePage(world) {
   const homeLoaded = world.page.waitForResponse(
     (response) => response.url().includes('/entries') && response.request().method() === 'GET'
   );
-  await world.page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
+  await world.page.goto(env.baseUrl, { waitUntil: 'domcontentloaded' });
   await homeLoaded;
 }
 

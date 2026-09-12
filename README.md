@@ -48,6 +48,15 @@ npm install
 npx playwright install chromium
 ```
 
+Create your local configuration from the template:
+
+```bash
+copy .env.example .env
+```
+
+`.env` is gitignored. Fill in `BASE_URL` and, if you need a persistent login,
+`DEMOBLAZE_USERNAME` / `DEMOBLAZE_PASSWORD`. See [Configuration](#configuration).
+
 ## Important Scripts
 
 ```bash
@@ -123,19 +132,39 @@ npm run test:cucumber:smoke:allure:ai
 
 ## Configuration
 
-Useful environment variables:
+All configuration lives in `.env` (copied from `.env.example`) and is read and
+validated once by `config/env.js`, which every runner imports. Real environment
+variables take precedence over `.env`, so CI secrets and one-off command-line
+overrides keep working.
 
-- `BASE_URL` to override the target application URL
-- `HEADLESS=false` to run headed
-- `SLOW_MO_MS=1000` to slow browser actions for debugging
-- `CUCUMBER_STEP_TIMEOUT_MS` to change the step timeout
-- `CUCUMBER_SCENARIO_LOGS=false` to disable live scenario logging
-- `AI_DEBUG_ALLURE=true` to auto-run the AI debug step after Allure generation
-- `OPENAI_API_KEY` to enable model-based diagnosis
-- `AI_DEBUG_MODEL` to override the default model used by the Allure debug script
-- `AI_DEBUG_MAX_FAILURES` to limit how many failed cases are analyzed per run
+| Variable | Default | Purpose |
+|---|---|---|
+| `BASE_URL` | `https://demoblaze.com/` | Target application URL |
+| `DEMOBLAZE_USERNAME` | — | Persistent test account username |
+| `DEMOBLAZE_PASSWORD` | — | Persistent test account password |
+| `HEADLESS` | `true` | Set `false` to run headed |
+| `SLOW_MO_MS` | `0` | Delay between browser actions, for debugging |
+| `CUCUMBER_STEP_TIMEOUT_MS` | `30000` | Per-step timeout |
+| `CUCUMBER_SCENARIO_LOGS` | `true` | Set `false` to disable live scenario logging |
+| `AI_DEBUG_ALLURE` | `false` | Set `true` to auto-run the AI debug step after Allure generation |
+| `OPENAI_API_KEY` | — | Enables model-based failure diagnosis |
+| `AI_DEBUG_MODEL` | `gpt-4.1-mini` | Model used by the Allure debug script |
+| `AI_DEBUG_MAX_FAILURES` | `5` | How many failed cases to analyze per run |
 
-Windows examples:
+### Credentials
+
+Two sources, used for different purposes:
+
+- **Generated per scenario** — `getGeneratedCredentials(this)` from
+  `app-context.js`. Default for authentication scenarios: a unique account per
+  run, so nothing collides with previous runs.
+- **Configured account** — `getEnvCredentials()` from `config/credentials.js`,
+  backed by `DEMOBLAZE_USERNAME` / `DEMOBLAZE_PASSWORD`. For flows that need a
+  login that survives between runs. Available in Gherkin as
+  `When I log in with the configured Demoblaze credentials`. Throws a clear
+  error if the variables are missing.
+
+Windows examples (an inline variable overrides `.env` for that run):
 
 ```bash
 set HEADLESS=false&& npm run test:cucumber

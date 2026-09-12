@@ -1,6 +1,7 @@
 import { After, Before, Status, setDefaultTimeout } from '@cucumber/cucumber';
+import { env } from '../../config/env.js';
 
-const SCENARIO_LOGS_ENABLED = process.env.CUCUMBER_SCENARIO_LOGS !== 'false';
+const SCENARIO_LOGS_ENABLED = env.scenarioLogs;
 
 function formatDuration(milliseconds) {
   if (!Number.isFinite(milliseconds) || milliseconds < 1000) {
@@ -52,7 +53,7 @@ function formatFailureSummary(result) {
   return '';
 }
 
-setDefaultTimeout(Number(process.env.CUCUMBER_STEP_TIMEOUT_MS ?? '30000'));
+setDefaultTimeout(env.stepTimeoutMs);
 
 Before(function ({ pickle, gherkinDocument }) {
   this.scenarioStartedAt = Date.now();

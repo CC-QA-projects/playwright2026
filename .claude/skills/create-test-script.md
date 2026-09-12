@@ -49,6 +49,7 @@ For every piece of behaviour the new scenario needs, classify it into exactly on
 - `I sign up with a generated Demoblaze account`
 - `I try to sign up again with the same generated Demoblaze account`
 - `I log in with the generated Demoblaze credentials`
+- `I log in with the configured Demoblaze credentials` — uses the persistent `.env` account; only for flows that need a login surviving between runs
 - `I attempt to log in with the generated username and an invalid password`
 - `I log out of Demoblaze`
 - `I add {string} from the {string} category to the cart` — navigates category → product → adds to cart → opens cart
@@ -213,7 +214,8 @@ Add new step definitions to the appropriate step file. Rules:
 - `expect` is imported from `@playwright/test` only when the step itself makes an assertion (prefer delegating assertions to the page object)
 - Page objects are available as `this.homePage`, `this.loginPage`, `this.cartPage`, `this.checkoutPage`, `this.commonModalsPage`, `this.productPage`
 - Dialog message is stored on `this.lastDialogMessage`
-- Generated credentials are accessed via `getGeneratedCredentials(this)` from `app-context.js`
+- Generated credentials are accessed via `getGeneratedCredentials(this)` from `app-context.js`; the persistent `.env` account via `getEnvCredentials()` from `config/credentials.js`
+- Config values (base URL, timeouts, headless) come from the `env` object in `config/env.js` — never read `process.env` directly
 - Never call `page.locator()`, `page.getByRole()`, etc. directly in a step definition
 
 ### 10. Add new products to test-data.js (if needed)
