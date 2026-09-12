@@ -21,6 +21,3 @@ reports/ai-debug/
 *.log
 .DS_Store
 Thumbs.db
-
-# Optional
-package-lock.json
