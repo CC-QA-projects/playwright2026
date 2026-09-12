@@ -17,11 +17,14 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
+    - name: Run Cucumber smoke tests
+      run: npm run test:cucumber:smoke
+    - name: Generate Allure report
+      if: ${{ !cancelled() }}
+      run: npm run allure:generate
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report
-        path: playwright-report/
+        name: allure-report
+        path: reports/allure-report/
         retention-days: 30

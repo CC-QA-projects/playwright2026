@@ -84,9 +84,13 @@ reports/
 
 ## Known Issues
 
-- **CI runs the wrong runner** — `.github/workflows/playwright.yml` runs `npx playwright test` (native Playwright), not Cucumber. The Cucumber suite is never executed in CI.
 - **`playwright.config.js` is not used** — has `headless: false` and `slowMo: 3000` hardcoded; would break CI if it were used.
 - **Modal assertion text** — `site-modals.steps.js` expects `"Thanks for the message!!"` (single-s), matching the current live Demoblaze alert text. This previously read as a double-s typo that was said to match the site; re-verified against the live site on 2026-09-08 and it does not — update this note again if the site's wording changes.
 - **`config/credentials.js`** — hardcoded plaintext credentials in version control. Unused by scenarios (which generate credentials dynamically) but should not be committed with real credentials.
-- **`tests/API/api.test.js`** — unused placeholder pointing at `api.example.com`. Dead code.
 - **Only Chromium enabled** — no cross-browser or mobile viewport coverage.
+
+## Resolved Issues (kept for history)
+
+- ~~CI runs the wrong runner~~ — fixed 2026-09-12: `.github/workflows/playwright.yml` now runs `npm run test:cucumber:smoke` and uploads the generated `reports/allure-report/` instead of running `npx playwright test`.
+- ~~`npm ci` failed in CI~~ — fixed 2026-09-12: `package-lock.json` was gitignored, so `npm ci` had nothing to install from. It's now committed.
+- ~~`tests/API/api.test.js`~~ — removed 2026-09-12: unused placeholder pointing at `api.example.com`; was the only thing the old `npx playwright test` runner ever executed.
