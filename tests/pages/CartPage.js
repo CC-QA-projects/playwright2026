@@ -28,7 +28,15 @@ class CartPage extends BasePage {
     await expect(this.productRow(productName)).toHaveCount(0);
   }
 
+  // Rows render after /viewcart resolves, so a bare count-of-0 can pass against
+  // a table that has not rendered yet. Where an item was present beforehand,
+  // pair this with expectProductNotVisible() to prove the row actually went.
+  async expectEmpty() {
+    await expect(this.cartRows).toHaveCount(0);
+  }
+
   async getTotal() {
+    // An empty cart renders #totalp as "", which Number() coerces to 0.
     const totalText = await this.totalLabel.textContent();
     return Number(totalText?.trim() ?? 0);
   }

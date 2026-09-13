@@ -29,3 +29,19 @@ Feature: Authentication flows
     When I attempt to log in with the generated username and an invalid password
     Then I should see a login error alert saying "Wrong password."
     And I should not see a welcome username
+
+  Scenario: Login with a username that does not exist is rejected
+    Given I am on the Demoblaze home page
+    When I attempt to log in with the username "no_such_demoblaze_user_00" and password "Irrelevant123!"
+    Then I should see a login error alert saying "User does not exist."
+    And I should not see a welcome username
+
+  Scenario: Signup is rejected when username and password are blank
+    Given I am on the Demoblaze home page
+    When I attempt to sign up with the username "" and password ""
+    Then I should see a signup error alert saying "Please fill out Username and Password."
+
+  Scenario: Login is rejected when username and password are blank
+    Given I am on the Demoblaze home page
+    When I attempt to log in with the username "" and password ""
+    Then I should see a login error alert saying "Please fill out Username and Password."

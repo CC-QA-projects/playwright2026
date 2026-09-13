@@ -61,6 +61,29 @@ When('I add {string} to the cart 2 times', async function (productName) {
   }
 });
 
+When('I open the cart', async function () {
+  await this.homePage.openCart();
+});
+
+Then('the cart should be empty', async function () {
+  await this.cartPage.expectEmpty();
+});
+
+When('I add the open product to the cart', async function () {
+  this.productPagePrice = await this.productPage.getDisplayedPrice();
+  this.lastDialogMessage = await this.productPage.addToCart();
+  await this.homePage.openCart();
+});
+
+Then(
+  'the cart price for {string} should equal its product page price',
+  async function (productName) {
+    const [cartPrice] = await this.cartPage.getProductPrices(productName);
+
+    expect(cartPrice).toBe(this.productPagePrice);
+  }
+);
+
 Then('the cart total should be price x2 for {string}', async function (productName) {
   const itemPrices = await this.cartPage.getProductPrices(productName);
 

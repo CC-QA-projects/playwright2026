@@ -4,10 +4,13 @@ import { BasePage } from './BasePage.js';
 class LoginPage extends BasePage {
   constructor(page) {
     super(page);
-    this.loginModalLabel = page.locator('#logInModalLabel');
+    this.loginModal = page.locator('#logInModal');
+    // Scoped to the modal: cart.html and prod.html give the About us heading a
+    // duplicate id="logInModalLabel", so a bare #logInModalLabel is ambiguous.
+    this.loginModalLabel = this.loginModal.getByRole('heading', { name: 'Log in' });
     this.usernameField = page.locator('#loginusername');
     this.passwordField = page.locator('#loginpassword');
-    this.submitButton = page.getByRole('button', { name: 'Log in' });
+    this.submitButton = this.loginModal.getByRole('button', { name: 'Log in' });
     this.signupModalLabel = page.locator('#signInModalLabel');
     this.signupModal = page.locator('#signInModal');
     this.signupUsernameField = page.locator('#sign-username');

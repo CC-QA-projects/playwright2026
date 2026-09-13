@@ -33,6 +33,24 @@ Then('I should see a duplicate signup alert', function () {
   expect(this.lastDialogMessage).toBe('This user already exist.');
 });
 
+When(
+  'I attempt to sign up with the username {string} and password {string}',
+  async function (username, password) {
+    this.lastDialogMessage = await this.loginPage.signUp(username, password);
+  }
+);
+
+Then('I should see a signup error alert saying {string}', function (message) {
+  expect(this.lastDialogMessage).toBe(message);
+});
+
+When(
+  'I attempt to log in with the username {string} and password {string}',
+  async function (username, password) {
+    this.lastDialogMessage = await this.loginPage.loginAndCaptureAlert(username, password);
+  }
+);
+
 When('I log in with the generated Demoblaze credentials', async function () {
   const { username, password } = getGeneratedCredentials(this);
   await this.loginPage.login(username, password);

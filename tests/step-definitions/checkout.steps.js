@@ -1,4 +1,5 @@
 import { When, Then } from '@cucumber/cucumber';
+import { expect } from '@playwright/test';
 
 When('I open the place order modal', async function () {
   await this.cartPage.openPlaceOrder();
@@ -20,4 +21,20 @@ Then('I should see the purchase confirmation', async function () {
 
 Then('the purchase confirmation should include {string}', async function (text) {
   await this.checkoutPage.expectConfirmationContains(text);
+});
+
+When('I attempt to place an order with blank name and card', async function () {
+  this.lastDialogMessage = await this.checkoutPage.submitPurchaseAndCaptureAlert();
+});
+
+Then('I should see an order error alert saying {string}', function (message) {
+  expect(this.lastDialogMessage).toBe(message);
+});
+
+Then('the place order modal should still be open', async function () {
+  await this.checkoutPage.expectOrderModalVisible();
+});
+
+When('I acknowledge the purchase confirmation', async function () {
+  await this.checkoutPage.acknowledgeConfirmation();
 });

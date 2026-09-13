@@ -88,7 +88,7 @@ reports/
 ## Test Tags
 
 - `@smoke` — 5 happy-path scenarios, run on every push
-- `@regression` — all 15 scenarios
+- `@regression` — all 29 scenarios (the 3 `Categories load correct products` examples count separately)
 
 ## CI
 
@@ -104,6 +104,16 @@ reports/
 - **Modal assertion text** — `site-modals.steps.js` expects `"Thanks for the message!!"` (single-s), matching the current live Demoblaze alert text. This previously read as a double-s typo that was said to match the site; re-verified against the live site on 2026-09-08 and it does not — update this note again if the site's wording changes.
 - **Only Chromium enabled** — no cross-browser or mobile viewport coverage.
 - **No CI account configured** — CI has no `DEMOBLAZE_USERNAME`/`DEMOBLAZE_PASSWORD` secrets, so any scenario using `getEnvCredentials()` will fail there until they are added to the workflow environment.
+
+### Live-site defects found 2026-09-13 (tests work around these, do not "fix" the workarounds)
+
+- **Duplicate DOM id on `cart.html` / `prod.html`** — the About us modal heading carries `id="logInModalLabel"` (and `#videoModalLabel` is absent on those pages). A bare `#logInModalLabel` is therefore ambiguous in Playwright strict mode, so `LoginPage` scopes its login-modal locators to `#logInModal`. Do not un-scope them.
+- **SweetAlert OK ignores early clicks** — the purchase confirmation only binds its confirm handler once `.sweet-alert` gains the `visible` class (~600ms after the title renders). Clicking OK before that is silently ignored and no redirect happens, so `CheckoutPage.acknowledgeConfirmation()` waits for that class first.
+- **`index.html` never reaches the `load` state**, and `/entries` is often served from cache on the post-purchase redirect. Wait on the URL (`waitUntil: 'domcontentloaded'`), not on `load`, `networkidle`, or the `/entries` response.
+- **Pagination `Previous` is off by one** — after Next→Previous, page 1 renders shifted by one product and pulls in a page-2 item. No test asserts Previous returns to the original page 1, because that would correctly fail.
+- **Confirmation date uses a 0-indexed month** — rendered `Date: 12/8/2026` on 2026-09-12. Assertions deliberately avoid the `Date:` field.
+- **`/viewcart` returns every cart row for every user on the site** (~186KB) and the page filters client-side by cookie. Rows therefore render *after* the response resolves, so an "is empty" assertion can pass against a table that has not rendered yet — see the note on `CartPage.expectEmpty()`.
+- **The Contact modal has no validation** — a completely blank submission still returns `"Thanks for the message!!"`. Untested on purpose; asserting it would enshrine a defect.
 
 ## Resolved Issues (kept for history)
 

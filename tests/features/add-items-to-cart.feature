@@ -30,3 +30,21 @@ Feature: Cart management
     Given I am on the Demoblaze home page
     When I add "Samsung galaxy s6" to the cart 2 times
     Then the cart total should be price x2 for "Samsung galaxy s6"
+
+  Scenario: Cart starts empty for a new session
+    Given I am on the Demoblaze home page
+    When I open the cart
+    Then the cart should be empty
+    And the cart total should equal 0
+
+  Scenario: Removing the last item empties the cart
+    Given I have "Samsung galaxy s6" in the cart
+    When I remove "Samsung galaxy s6" from the cart
+    Then the cart should be empty
+    And the cart total should equal 0
+
+  Scenario: Cart line price matches the price on the product page
+    Given I am on the Demoblaze home page
+    When I open the "Samsung galaxy s6" product page
+    And I add the open product to the cart
+    Then the cart price for "Samsung galaxy s6" should equal its product page price

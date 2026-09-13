@@ -12,6 +12,26 @@ Then('I should see the product {string} in the product list', async function (pr
   await this.homePage.expectProductInList(product);
 });
 
+Then('I should not see the product {string} in the product list', async function (product) {
+  await this.homePage.expectProductNotInList(product);
+});
+
+Then('I should see {int} products in the product list', async function (expectedCount) {
+  await this.homePage.expectProductCount(expectedCount);
+});
+
+When('I go to the next page of products', async function () {
+  await this.homePage.goToNextProductPage();
+});
+
+Then('the next page button should be hidden', async function () {
+  await this.homePage.expectNextPageButtonHidden();
+});
+
+When('I return to the home page from the navbar', async function () {
+  await this.homePage.openHome();
+});
+
 When('I open the {string} product page', async function (productName) {
   await this.homePage.openProduct(productName);
 });

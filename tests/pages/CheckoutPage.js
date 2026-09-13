@@ -17,6 +17,8 @@ class CheckoutPage extends BasePage {
     this.modalTotal = page.locator('#totalm');
     this.confirmationTitle = page.getByText('Thank you for your purchase!');
     this.confirmationDetails = page.locator('.sweet-alert p');
+    this.confirmationDialog = page.locator('.sweet-alert');
+    this.confirmationOkButton = page.locator('.sweet-alert button.confirm');
   }
 
   async expectOrderModalVisible() {
@@ -43,6 +45,23 @@ class CheckoutPage extends BasePage {
   async placeOrder(orderDetails) {
     await this.fillOrderDetails(orderDetails);
     await this.submitPurchase();
+  }
+
+  async submitPurchaseAndCaptureAlert() {
+    return this.captureDialogMessage(async () => {
+      await this.purchaseButton.evaluate((button) => button.click());
+    });
+  }
+
+  // SweetAlert only binds its confirm handler once the dialog finishes opening
+  // and gains the "visible" class; clicking OK before then is silently ignored.
+  async acknowledgeConfirmation() {
+    await expect(this.confirmationDialog).toHaveClass(/visible/);
+    const redirectedHome = this.page.waitForURL(/index\.html/, {
+      waitUntil: 'domcontentloaded',
+    });
+    await this.confirmationOkButton.click();
+    await redirectedHome;
   }
 
   async expectConfirmationVisible() {

@@ -12,7 +12,12 @@ class HomePage extends BasePage {
     this.aboutUsLink = page.getByRole('link', { name: 'About us' });
     this.homeLink = page.getByRole('link', { name: /^Home/ });
     this.productGrid = page.locator('#tbodyid');
+    this.productCards = page.locator('#tbodyid .card');
     this.addToCartLink = page.getByRole('link', { name: 'Add to cart' });
+    // Ids, not roles: the carousel controls share the accessible names
+    // "Next"/"Previous" with the product pagination buttons.
+    this.nextPageBtn = page.locator('#next2');
+    this.prevPageBtn = page.locator('#prev2');
     this.carouselNextBtn = page
       .locator('#carouselExampleIndicators')
       .getByRole('button', { name: 'Next' });
@@ -60,6 +65,27 @@ class HomePage extends BasePage {
     await expect(this.productGrid).toContainText(productName);
   }
 
+  async expectProductNotInList(productName) {
+    await expect(this.productGrid).not.toContainText(productName);
+  }
+
+  async expectProductCount(expectedCount) {
+    await expect(this.productCards).toHaveCount(expectedCount);
+  }
+
+  async goToNextProductPage() {
+    const pageLoaded = this.page.waitForResponse(
+      (response) =>
+        response.url().includes('/pagination') && response.request().method() === 'POST'
+    );
+    await this.nextPageBtn.click();
+    await pageLoaded;
+  }
+
+  async expectNextPageButtonHidden() {
+    await expect(this.nextPageBtn).toBeHidden();
+  }
+
   async openProduct(productName) {
     await this.page.getByRole('link', { name: productName, exact: true }).click();
     await expect(this.addToCartLink).toBeVisible();
@@ -69,7 +95,15 @@ class HomePage extends BasePage {
     const cartLoaded = this.page.waitForResponse(
       (response) => response.url().includes('/viewcart') && response.request().method() === 'POST'
     );
-    await this.page.getByRole('link', { name: 'Cart', exact: true }).click();
+
+    // Clicking Cart while already on cart.html is a same-page navigation that
+    // never re-requests /viewcart, so reload to pick up server-side changes.
+    if (this.page.url().includes('cart.html')) {
+      await this.page.reload({ waitUntil: 'domcontentloaded' });
+    } else {
+      await this.page.getByRole('link', { name: 'Cart', exact: true }).click();
+    }
+
     await cartLoaded;
     await expect(this.page.locator('#page-wrapper')).toContainText('Products');
   }

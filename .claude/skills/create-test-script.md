@@ -51,7 +51,15 @@ For every piece of behaviour the new scenario needs, classify it into exactly on
 - `I log in with the generated Demoblaze credentials`
 - `I log in with the configured Demoblaze credentials` — uses the persistent `.env` account; only for flows that need a login surviving between runs
 - `I attempt to log in with the generated username and an invalid password`
+- `I attempt to log in with the username {string} and password {string}` — pass `""` for blank-field validation
+- `I attempt to sign up with the username {string} and password {string}` — pass `""` for blank-field validation
 - `I log out of Demoblaze`
+- `I open the cart` — safe to call from anywhere, including cart.html itself
+- `I add the open product to the cart` — from a product page; records the displayed price for later comparison
+- `I return to the home page from the navbar`
+- `I go to the next page of products`
+- `I acknowledge the purchase confirmation` — clicks OK and waits for the redirect home
+- `I attempt to place an order with blank name and card`
 - `I add {string} from the {string} category to the cart` — navigates category → product → adds to cart → opens cart
 - `I add {string} to the cart 2 times`
 - `I remove {string} from the cart`
@@ -87,6 +95,14 @@ For every piece of behaviour the new scenario needs, classify it into exactly on
 - `the purchase confirmation should include {string}`
 - `I should see a contact success alert`
 - `I should see the About us modal content`
+- `I should see a signup error alert saying {string}`
+- `I should see an order error alert saying {string}`
+- `the place order modal should still be open`
+- `the cart should be empty` — weak on its own (see `CartPage.expectEmpty()`); pair with an absence assertion where an item was present beforehand
+- `the cart price for {string} should equal its product page price`
+- `I should see {int} products in the product list`
+- `I should not see the product {string} in the product list`
+- `the next page button should be hidden`
 
 ### 3. Verify locators and behaviour against the live site (ALWAYS — never assume)
 
